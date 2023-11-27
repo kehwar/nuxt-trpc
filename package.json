@@ -1,0 +1,65 @@
+{
+    "name": "@kehwar/trpc-nuxt-auto",
+    "type": "module",
+    "version": "0.0.1",
+    "description": "Automatic TRPC routes and remote functions",
+    "license": "MIT",
+    "repository": "@kehwar/trpc-nuxt-auto",
+    "exports": {
+        ".": {
+            "types": "./dist/types.d.ts",
+            "import": "./dist/module.mjs",
+            "require": "./dist/module.cjs"
+        }
+    },
+    "main": "./dist/module.cjs",
+    "types": "./dist/types.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepack": "nuxt-module-build build",
+        "dev": "nuxi dev playground",
+        "dev:build": "nuxi build playground",
+        "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+        "release": "pnpm run prepack && pnpm publish && git push --follow-tags",
+        "lint": "eslint .",
+        "test": "vitest run",
+        "test:watch": "vitest watch"
+    },
+    "peerDependencies": {
+        "@trpc/client": "^10.44.1",
+        "@trpc/server": "^10.44.1",
+        "devalue": "^4.3.2",
+        "superjson": "^2.2.1",
+        "trpc-nuxt": "^0.10.12"
+    },
+    "dependencies": {
+        "@nuxt/kit": "^3.8.2",
+        "@rollup/pluginutils": "^5.0.5",
+        "es-module-lexer": "^1.4.1",
+        "fast-glob": "^3.3.2",
+        "lodash": "^4.17.21",
+        "pathe": "^1.1.1",
+        "vite": "^5.0.2"
+    },
+    "devDependencies": {
+        "@kehwar/eslint-config": "^1.0.15",
+        "@nuxt/devtools": "latest",
+        "@nuxt/eslint-config": "^0.2.0",
+        "@nuxt/module-builder": "^0.5.4",
+        "@nuxt/schema": "^3.8.2",
+        "@nuxt/test-utils": "^3.8.1",
+        "@trpc/client": "^10.44.1",
+        "@trpc/server": "^10.44.1",
+        "@types/lodash": "^4.14.202",
+        "@types/node": "^20.9.3",
+        "changelogen": "^0.5.5",
+        "devalue": "^4.3.2",
+        "eslint": "^8.54.0",
+        "nuxt": "^3.8.2",
+        "superjson": "^2.2.1",
+        "trpc-nuxt": "^0.10.12",
+        "vitest": "^0.33.0"
+    }
+}
