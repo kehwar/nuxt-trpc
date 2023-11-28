@@ -15,3 +15,5 @@ export const createTRPCApp = _.once(() =>
             transformer: getDataTransformer(),
         }),
 )
+
+export default createTRPCApp

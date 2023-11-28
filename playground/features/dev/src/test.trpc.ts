@@ -1,5 +1,3 @@
-import { defineTRPCProcedure } from '~/fixtures/trpc/src/define-trpc-procedure'
-
 export async function sayTest() {
     return 'test'
 }

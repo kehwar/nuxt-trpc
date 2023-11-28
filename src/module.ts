@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { addTransformerPlugin } from './runtime/add-transformer-plugin'
 import { DefaultModuleOptions, type Options } from './runtime/options'
 import { writeRouterTemplateFiles } from './runtime/write-router-template'
+import { writeProcedureTemplateFiles } from './runtime/write-procedure-template'
 
 export default defineNuxtModule({
     meta: {
@@ -46,6 +47,7 @@ export default defineNuxtModule({
 
         // Write template files
         writeRouterTemplateFiles(files, options)
+        writeProcedureTemplateFiles(options)
 
         // Add vite plugin
         addTransformerPlugin(options)

@@ -32,7 +32,7 @@ function generateRouterTemplate(files: string[], options: Options) {
     const procedures = files.map(file => parseProcedurePath(file, options))
 
     // Create composable
-    const resolver = createResolver(options.nuxt.options.srcDir)
+    const resolver = createResolver(options.cwd)
     const appImport = `import router from '${resolver.resolve(options.inject.router)}'`
 
     // Generate imports

@@ -35,6 +35,7 @@ export const DefaultModuleOptions = {
     inject: {
         router: 'fixtures/trpc/src/define-trpc-router',
         context: 'fixtures/trpc/src/create-trpc-event-context',
+        app: 'fixtures/trpc/src/create-trpc-app',
     },
 }
 export type ModuleOptions = typeof DefaultModuleOptions
