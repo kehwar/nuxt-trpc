@@ -8,5 +8,5 @@ import { TRPCAutoRouter } from '#trpcAuto'
  * @see https://trpc-nuxt.vercel.app/get-started/usage/recommended#_1-create-a-trpc-router
  */
 export function createTRPCEventHandler() {
-  return createNuxtApiHandler({ router: TRPCAutoRouter, createContext: createTRPCEventContext })
+    return createNuxtApiHandler({ router: TRPCAutoRouter, createContext: createTRPCEventContext })
 }

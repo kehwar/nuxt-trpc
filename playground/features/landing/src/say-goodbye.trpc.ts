@@ -1,7 +1,7 @@
 import { defineTRPCProcedure } from '~/fixtures/trpc/src/define-trpc-procedure'
 
 export async function sayGoodbye() {
-  return 'goodbye'
+    return 'goodbye'
 }
 
 // @TRPCQuery
