@@ -1,3 +1,5 @@
+import type { Nuxt } from '@nuxt/schema'
+
 export const DefaultModuleOptions = {
     pattern: '**/*.trpc.{ts,js,mjs}',
     queryPrefixes: [
@@ -38,4 +40,5 @@ export const DefaultModuleOptions = {
 export type ModuleOptions = typeof DefaultModuleOptions
 export type Options = ModuleOptions & {
     cwd: string
+    nuxt: Nuxt
 }

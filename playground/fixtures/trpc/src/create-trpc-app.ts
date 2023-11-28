@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server'
 import _ from 'lodash'
-import { getDataTransformer } from './get-data-transformer'
 import type { createTRPCEventContext } from './create-trpc-event-context'
+import { getDataTransformer } from './get-data-transformer'
 
 /**
  * Initialize TRPC App

@@ -1,3 +1,4 @@
+import { addVitePlugin } from '@nuxt/kit'
 import { createFilter } from '@rollup/pluginutils'
 import { init, parse } from 'es-module-lexer'
 import _ from 'lodash'
@@ -6,9 +7,9 @@ import type { Options } from './options'
 import type { TRPCProcedure } from './parse-procedure-path'
 import { parseProcedurePath } from './parse-procedure-path'
 
-export function transformServerFiles(options: Options): Plugin {
+export function addTransformerPlugin(options: Options) {
     const filter = createFilter(options.pattern)
-    return {
+    const plugin: Plugin = {
         name: 'vite-plugin-trpc-auto',
         enforce: 'post',
         async transform(code, id, opts) {
@@ -23,6 +24,7 @@ export function transformServerFiles(options: Options): Plugin {
             }
         },
     }
+    addVitePlugin(plugin)
 }
 async function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure, code: string) {
     await init
