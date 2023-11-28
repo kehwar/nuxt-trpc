@@ -1,3 +1,3 @@
-import kehwar from '@kehwar/eslint-config'
+import antfu from '@antfu/eslint-config'
 
-export default kehwar()
+export default antfu()

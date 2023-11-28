@@ -5,7 +5,7 @@ const goodBye = await sayGoodbye()
 </script>
 
 <template>
-    <div>
-        {{ goodBye }}
-    </div>
+  <div>
+    {{ goodBye }}
+  </div>
 </template>
