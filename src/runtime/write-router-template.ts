@@ -1,29 +1,33 @@
 import { addTemplate, addTypeTemplate, createResolver } from '@nuxt/kit'
 import _ from 'lodash'
+import dedent from 'dedent'
 import { parseProcedurePath } from './parse-procedure-path'
 import type { Options } from './options'
+import { getTemplateNames } from './get-template-names'
+
+const name = getTemplateNames('routes')
 
 export function writeRouterTemplateFiles(files: string[], options: Options) {
     const content = generateRouterTemplate(files, options)
     addTemplate({
-        filename: 'trpc-auto-router.ts',
+        filename: `${name.asPath}.ts`,
         write: true,
         getContents() {
             return content
         },
     })
     addTypeTemplate({
-        filename: 'types/trpc-auto-router.d.ts',
-        getContents: () =>
-            [
-                'declare module \'#trpcAuto\' {',
-                `const TRPCAutoRouter: typeof import('../trpc-auto-router').TRPCAutoRouter`,
-                '}',
-            ].join('\n'),
+        filename: `types/${name.asKebab}.d.ts`,
+        getContents: () => dedent`
+        declare module '${name.asVirtual}' {
+            const ${name.asVar}: typeof import('../${name.asPath}').${name.asVar}
+            export default ${name.asVar}
+        }
+        `,
     })
     options.nuxt.hook('nitro:config', (nitroConfig) => {
         nitroConfig.virtual = nitroConfig.virtual || {}
-        nitroConfig.virtual['#trpcAuto'] = content
+        nitroConfig.virtual[name.asVirtual] = content
     })
 }
 
@@ -57,7 +61,10 @@ function generateRouterTemplate(files: string[], options: Options) {
             }
             return str
         }
-        return `export const TRPCAutoRouter = router({\n${stringify(routeMap, 1)}});`
+        return [
+            `export const ${name.asVar} = router({\n${stringify(routeMap, 1)}})`,
+            `export default ${name.asVar}`,
+        ].join('\n')
     })()
 
     // Return

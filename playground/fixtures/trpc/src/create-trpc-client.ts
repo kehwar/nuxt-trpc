@@ -1,12 +1,12 @@
 import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
 import { getDataTransformer } from './get-data-transformer'
-import type { TRPCAutoRouter } from '#trpcAuto'
+import type routes from '#trpc-auto/routes'
 
 /**
  * Create the TRPC client instance
  */
 export function createTRPCClient() {
-    return createTRPCNuxtClient<typeof TRPCAutoRouter>({
+    return createTRPCNuxtClient<typeof routes>({
     /**
      * Use data transformer
      *
