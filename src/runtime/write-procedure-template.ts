@@ -34,11 +34,11 @@ export function writeProcedureTemplateFiles(options: Options) {
         nitroConfig.virtual[virtualFilename] = content
     })
     addImports({
-        from: resolver.resolve(`.nuxt/${safefilename}`),
+        from: `#build/${safefilename}`,
         name: varName,
     })
     addServerImports([{
-        from: resolver.resolve(`.nuxt/${safefilename}`),
+        from: virtualFilename,
         name: varName,
     }])
 }
