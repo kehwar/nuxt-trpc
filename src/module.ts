@@ -6,6 +6,7 @@ import { addTransformerPlugin } from './runtime/add-transformer-plugin'
 import { DefaultModuleOptions, type Options } from './runtime/options'
 import { writeRouterTemplateFiles } from './runtime/write-router-template'
 import { writeProcedureTemplateFiles } from './runtime/write-procedure-template'
+import { writeServerHandlerTemplateFiles } from './runtime/write-server-handler-template'
 
 export default defineNuxtModule({
     meta: {
@@ -48,6 +49,7 @@ export default defineNuxtModule({
         // Write template files
         writeRouterTemplateFiles(files, options)
         writeProcedureTemplateFiles(options)
+        writeServerHandlerTemplateFiles(options)
 
         // Add vite plugin
         addTransformerPlugin(options)
