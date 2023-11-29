@@ -38,6 +38,7 @@
         "@antfu/eslint-config": "^2.1.1",
         "@nuxt/kit": "^3.8.2",
         "@rollup/pluginutils": "^5.0.5",
+        "dedent": "^1.5.1",
         "es-module-lexer": "^1.4.1",
         "fast-glob": "^3.3.2",
         "lodash": "^4.17.21",
