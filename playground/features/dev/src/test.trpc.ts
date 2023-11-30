@@ -1,5 +1,7 @@
 export async function sayTest() {
-    return 'test'
+    const meta = {
+        client: import.meta.client,
+    }
+    const result = JSON.stringify(meta)
+    return result
 }
-
-export default defineTRPCProcedure().input(v => v as Parameters<typeof sayTest>).query(() => sayTest())

@@ -4,7 +4,7 @@ import { uneval } from 'devalue'
 import _ from 'lodash'
 import superjson from 'superjson'
 
-export const getDataTransformer = _.once(() => ({
+export const TRPCDataTransformer = {
 
     // Serialize input with superjson, this allows us to use `Date`s in our API
     input: superjson,
@@ -14,4 +14,4 @@ export const getDataTransformer = _.once(() => ({
         serialize: (object: unknown) => uneval(object),
         deserialize: (object: unknown) => eval(`(${object})`),
     },
-}))
+}

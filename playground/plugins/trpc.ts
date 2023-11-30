@@ -1,10 +1,3 @@
-import { createTRPCClient } from '~/fixtures/trpc/src/create-trpc-client'
+import TRPCClientPlugin from '~/fixtures/trpc/src/client-plugin'
 
-export default defineNuxtPlugin(() => {
-    const trpc = createTRPCClient()
-    return {
-        provide: {
-            trpc,
-        },
-    }
-})
+export default TRPCClientPlugin
