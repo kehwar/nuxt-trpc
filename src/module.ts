@@ -1,10 +1,12 @@
-import fs from 'node:fs'
 import { addImports, addPlugin, addServerHandler, addServerImports, addTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import fg from 'fast-glob'
 import _ from 'lodash'
-import dedent from 'dedent'
 import { DefaultModuleOptions, type Options } from './runtime/options'
-import { type TRPCProcedure, parseProcedurePath } from './runtime/parse-procedure-path'
+import { parseProcedurePath } from './runtime/parse-procedure-path'
+import { addTransformerPlugin } from './runtime/add-transformer-plugin'
+import { getApiTemplate } from './templates/get-api-template'
+import { getClientPluginTemplate } from './templates/get-client-plugin-template'
+import { getServerHandlerTemplate } from './templates/get-server-handler-template'
 
 export default defineNuxtModule({
     meta: {
@@ -85,116 +87,8 @@ export default defineNuxtModule({
 
         // Add plugin
         addPlugin(resolver.resolve('trpc-auto/client-plugin'))
+
+        // Add vite plugin
+        addTransformerPlugin(options)
     },
 })
-
-function getApiTemplate() {
-    return dedent`
-        import { initTRPC } from '@trpc/server'
-        import { uneval } from 'devalue'
-        import superjson from 'superjson'
-
-        // Data Transformer
-        const dataTransformer = {
-            input: superjson,
-            output: {
-                serialize: (object: unknown) => uneval(object),
-                deserialize: () => null,
-            },
-        }
-
-        const TRPCApp = initTRPC.create({ transformer: dataTransformer })
-        const procedure = TRPCApp.procedure
-
-        export function defineTRPCProcedure<T>(callback: (builder: typeof procedure) => T) {
-            return callback(procedure)
-        }
-
-        export { TRPCApp }
-    `
-}
-
-function getClientPluginTemplate() {
-    return dedent`
-        import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
-        import superjson from 'superjson'
-        import type { TRPCRoutes } from './server-handler'
-        import { defineNuxtPlugin, useRequestHeaders } from '#imports'
-
-        const dataTransformer = {
-            input: superjson,
-            output: {
-                serialize: () => null,
-                deserialize: (object: unknown) => eval(\`(\${object})\`),
-            },
-        }
-
-        const TRPCClientPlugin = defineNuxtPlugin(() => {
-            const headers = useRequestHeaders()
-            const client = createTRPCNuxtClient<TRPCRoutes>({
-                transformer: dataTransformer,
-                links: [
-                    httpBatchLink({
-                        url: '/api/trpc',
-                        async headers() {
-                            return {
-                                ...headers,
-                            }
-                        },
-                    }),
-                ],
-            })
-            return {
-                provide: {
-                    trpc: client,
-                },
-            }
-        })
-
-        export default TRPCClientPlugin
-    `
-}
-
-function getServerHandlerTemplate(procedures: TRPCProcedure[]) {
-    const imports = procedures
-        .map(({ importPath, importName }) => {
-            return `import * as ${importName} from '${importPath}'`
-        })
-        .join('\n')
-    const routes = (() => {
-        const routeMap: Record<string, any> = {}
-        for (const obj of procedures)
-            _.set(routeMap, `${obj.routerPathName}.${obj.procedureName}`, `${obj.importName}.TRPCProcedure`)
-        function stringify(obj: Record<string, any>, depth: number) {
-            let str = ''
-            for (const key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    const value = obj[key]
-                    str += typeof value === 'object' ? `${key}: router({\n${stringify(value, depth + 1)}}),\n` : `${key}: ${value},\n`
-                }
-            }
-            return str
-        }
-        return [
-            `export const routes = router({\n${stringify(routeMap, 1)}})`,
-        ].join('\n')
-    })()
-    return dedent`
-        import { createNuxtApiHandler } from 'trpc-nuxt'
-        import { TRPCApp } from './api'
-
-        ${imports}
-
-        const router = TRPCApp.router
-
-        ${routes}
-
-        export type TRPCRoutes = typeof routes
-
-        export const TRPCServerHandler = createNuxtApiHandler({
-            router: routes,
-        })
-
-        export default TRPCServerHandler
-    `
-}

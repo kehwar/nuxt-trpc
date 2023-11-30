@@ -1,21 +1,27 @@
 <script setup lang="ts">
-const hello = await useNuxtApp().$trpc.features.landing.src.sayHello.query()
-// const goodBye = await sayGoodbye()
-// const testClient = await sayTest()
-const testServer = await useNuxtApp().$trpc.features.dev.src.test.query()
+import sayTest from './features/dev/src/test.trpc'
+import sayHello from './features/landing/src/say-hello.trpc'
+
+const arr1 = ref<string[]>([])
+const arr2 = ref<string[]>([])
+const test = await sayTest()
+async function action() {
+    arr1.value.push(await sayTest())
+    arr1.value.push(await sayHello('bro'))
+    arr2.value.push(await useNuxtApp().$trpc.features.dev.src.test.query())
+    arr2.value.push(await useNuxtApp().$trpc.features.landing.src.sayHello.query('sis'))
+}
 </script>
 
 <template>
+    {{ test }}
+    <button @click="() => action()">
+        Click
+    </button>
     <div>
-        {{ hello }}
+        {{ arr1 }}
     </div>
-    <!-- <div>
-        {{ goodBye }}
-    </div>
     <div>
-        {{ testClient }}
-    </div> -->
-    <div>
-        {{ testServer }}
+        {{ arr2 }}
     </div>
 </template>

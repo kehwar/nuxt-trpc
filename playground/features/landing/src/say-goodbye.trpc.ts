@@ -4,4 +4,4 @@ export async function sayGoodbye() {
 
 export default sayGoodbye
 
-export const TRPCProcedure = defineTRPCProcedure(b => b.query(async () => await sayGoodbye()))
+export const TRPCProcedure = defineTRPCProcedure(b => b.query(async () => `${await sayGoodbye()} from TRPC`))
