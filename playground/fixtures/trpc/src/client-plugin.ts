@@ -2,6 +2,9 @@ import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
 import _ from 'lodash'
 import superjson from 'superjson'
 import type { TRPCRoutes } from './server-handler'
+import { defineNuxtPlugin, useRequestHeaders } from '#imports'
+
+// @TRPCRoutes
 
 const dataTransformer = {
     input: superjson,
