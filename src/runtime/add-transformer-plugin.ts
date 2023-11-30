@@ -12,11 +12,11 @@ export function addTransformerPlugin(options: Options) {
     const plugin: Plugin = {
         name: 'vite-plugin-trpc-auto',
         enforce: 'post',
-        async transform(code, id, _opts) {
+        transform(_code, id, _opts) {
             if (!filter(id))
                 return
             const procedure = parseProcedurePath(id, options)
-            const result = await transformExportsToTRPCCalls(procedure, code)
+            const result = transformExportsToTRPCCalls(procedure)
             return {
                 code: result,
             }
@@ -24,11 +24,11 @@ export function addTransformerPlugin(options: Options) {
     }
     addVitePlugin(plugin)
 }
-async function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure, code: string) {
-    await init
-    const [, exports] = parse(code)
-    return exports.map((e) => {
-        const exportHeader = e.n === 'default' ? 'export default' : `export const ${e.n} =`
-        return `${exportHeader} (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(...args)`
-    }).join('\n')
+function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure) {
+    return [
+        'export default',
+        `export const ${procedureName} =`,
+    ]
+        .map(exportHeader => `${exportHeader} (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(...args)`)
+        .join('\n')
 }
