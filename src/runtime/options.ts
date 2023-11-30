@@ -32,11 +32,6 @@ export const DefaultModuleOptions = {
     ],
     subscriptionPrefixes: ['subscribe'],
     defaultAction: 'query' as 'query' | 'mutation' | 'subscription' | 'error',
-    inject: {
-        router: 'fixtures/trpc/src/define-trpc-router',
-        context: 'fixtures/trpc/src/create-trpc-event-context',
-        app: 'fixtures/trpc/src/create-trpc-app',
-    },
 }
 export type ModuleOptions = typeof DefaultModuleOptions
 export type Options = ModuleOptions & {
