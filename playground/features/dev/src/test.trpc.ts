@@ -1,5 +1,3 @@
-import { defineTRPCProcedure } from '~/fixtures/trpc/src/app'
-
 export async function sayTest() {
     const meta = {
         client: import.meta.client,
