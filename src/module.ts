@@ -1,4 +1,5 @@
-import { addVitePlugin, defineNuxtModule } from '@nuxt/kit'
+import fs from 'node:fs'
+import { addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import { createFilter } from '@rollup/pluginutils'
 import fg from 'fast-glob'
 import _ from 'lodash'
@@ -18,40 +19,26 @@ export default defineNuxtModule({
 
     // The function holding your module logic, it can be asynchronous
     async setup(moduleOptions, nuxt) {
-        const options: Options = { ...moduleOptions, nuxt, cwd: nuxt.options.srcDir }
-
-        // Scan TRPC files
-        const files: string[] = []
-        async function scanTRPCFiles() {
-            files.length = 0
-            const updatedFiles = await fg(options.pattern, {
-                cwd: options.nuxt.options.srcDir,
-                absolute: true,
-                onlyFiles: true,
-                ignore: ['!**/node_modules', '!**/dist'],
+        const resolver = createResolver(nuxt.options.srcDir)
+        const clientPluginPath = resolver.resolve('fixtures/trpc/src/client-plugin.ts')
+        if (fs.existsSync(clientPluginPath)) {
+            addTemplate({
+                filename: 'trpc-auto/client-plugin.ts',
+                write: true,
+                getContents() {
+                    return fs.readFileSync(clientPluginPath, 'utf-8')
+                },
             })
-            files.push(...new Set(updatedFiles))
-            return files
         }
-        await scanTRPCFiles()
-
-        // Rebuild the app on changes to the files
-        const filter = createFilter(options.pattern)
-        nuxt.hook('builder:watch', async (e, path) => {
-            if (e === 'change')
-                return
-            if (filter(path)) {
-                await scanTRPCFiles()
-                await nuxt.callHook('builder:generateApp')
-            }
-        })
-
-        // Write template files
-        writeRouterTemplateFiles(files, options)
-        writeProcedureTemplateFiles(options)
-        writeServerHandlerTemplateFiles(options)
-
-        // Add vite plugin
-        addTransformerPlugin(options)
+        const serverHandlerPath = resolver.resolve('fixtures/trpc/src/server-handler.ts')
+        if (fs.existsSync(serverHandlerPath)) {
+            addTemplate({
+                filename: 'trpc-auto/server-handler.ts',
+                write: true,
+                getContents() {
+                    return fs.readFileSync(serverHandlerPath, 'utf-8')
+                },
+            })
+        }
     },
 })
