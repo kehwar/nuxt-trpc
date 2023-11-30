@@ -44,12 +44,16 @@ export default defineNuxtModule({
         const procedures = files.map(file => parseProcedurePath(file, options))
 
         // Get template files
+        const appPath = resolver.resolve('fixtures/trpc/src/app.ts')
         const pluginPath = resolver.resolve('fixtures/trpc/src/client-plugin.ts')
         const handlerPath = resolver.resolve('fixtures/trpc/src/server-handler.ts')
+        if (!fs.existsSync(appPath))
+            return
         if (!fs.existsSync(pluginPath))
             return
         if (!fs.existsSync(handlerPath))
             return
+        const appContent = fs.readFileSync(appPath, 'utf-8')
         const pluginContent = fs.readFileSync(pluginPath, 'utf-8')
         let handlerContent = fs.readFileSync(handlerPath, 'utf-8')
 
@@ -88,6 +92,13 @@ export default defineNuxtModule({
 
         // Write template files
         addTemplate({
+            filename: 'trpc-auto/app.ts',
+            write: true,
+            getContents() {
+                return appContent
+            },
+        })
+        addTemplate({
             filename: 'trpc-auto/client-plugin.ts',
             write: true,
             getContents() {
@@ -103,17 +114,18 @@ export default defineNuxtModule({
         })
         options.nuxt.hook('nitro:config', (nitroConfig) => {
             nitroConfig.virtual = nitroConfig.virtual || {}
-            nitroConfig.virtual['#trpc-auto'] = handlerContent
+            nitroConfig.virtual['#trpc-auto/app'] = appContent
+            nitroConfig.virtual['#trpc-auto/server-handler'] = handlerContent
         })
 
         // Write autoimports
         addImports([{
             name: 'defineTRPCProcedure',
-            from: '#build/trpc-auto/server-handler',
+            from: '#build/trpc-auto/app',
         }])
         addServerImports([{
             name: 'defineTRPCProcedure',
-            from: '#trpc-auto',
+            from: '#trpc-auto/app',
         }])
     },
 })

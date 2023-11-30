@@ -4,5 +4,4 @@ export default defineNuxtConfig({
         transpile: ['trpc-nuxt'],
     },
     devtools: { enabled: true },
-    ssr: false,
 })
