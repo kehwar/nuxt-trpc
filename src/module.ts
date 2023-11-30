@@ -112,10 +112,13 @@ export default defineNuxtModule({
                 return handlerContent
             },
         })
-        options.nuxt.hook('nitro:config', (nitroConfig) => {
+        nuxt.hook('nitro:config', (nitroConfig) => {
             nitroConfig.virtual = nitroConfig.virtual || {}
             nitroConfig.virtual['#trpc-auto/app'] = appContent
             nitroConfig.virtual['#trpc-auto/server-handler'] = handlerContent
+        })
+        nuxt.hook('prepare:types', (options) => {
+            options.tsConfig.include?.unshift('./trpc-auto')
         })
 
         // Write autoimports
