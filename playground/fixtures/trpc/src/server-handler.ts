@@ -1,40 +1,37 @@
-import { initTRPC } from '@trpc/server'
 import _ from 'lodash'
 import { createNuxtApiHandler } from 'trpc-nuxt'
-import { uneval } from 'devalue'
-import superjson from 'superjson'
+import TRPCApp from './app'
 
-import { sayGoodbye } from '~/features/landing/src/say-goodbye.trpc'
-import { sayTest } from '~/features/dev/src/test.trpc'
-import { sayHello } from '~/features/landing/src/say-hello.trpc'
+/* @TRPCProcedureImports */
 
-const dataTransformer = {
-    input: superjson,
-    output: {
-        serialize: (object: unknown) => uneval(object),
-        deserialize: _.noop,
-    },
-}
+import * as featuresLandingSrc_sayGoodbye from 'C:/Workspace/kehwar/trpc-nuxt-auto/playground/features/landing/src/say-goodbye.trpc'
+import * as featuresLandingSrc_sayHello from 'C:/Workspace/kehwar/trpc-nuxt-auto/playground/features/landing/src/say-hello.trpc'
+import * as featuresDevSrc_test from 'C:/Workspace/kehwar/trpc-nuxt-auto/playground/features/dev/src/test.trpc'
 
-const app = initTRPC.create({ transformer: dataTransformer })
-const router = app.router
-const procedure = app.procedure
+/* @TRPCProcedureImports */
+
+const router = TRPCApp.router
+
+/* @TRPCRoutes */
 
 const routes = router({
     features: router({
         dev: router({
             src: router({
-                test: procedure.query(async () => await sayTest()),
+                test: featuresDevSrc_test.TRPCProcedure,
             }),
         }),
         landing: router({
             src: router({
-                sayGoodbye: procedure.query(async () => await sayGoodbye()),
-                sayHello: procedure.query(async () => await sayHello()),
+                sayGoodbye: featuresLandingSrc_sayGoodbye.TRPCProcedure,
+                sayHello: featuresLandingSrc_sayHello.TRPCProcedure,
             }),
         }),
     }),
 })
+
+/* @TRPCRoutes */
+
 export type TRPCRoutes = typeof routes
 
 export const TRPCServerHandler = createNuxtApiHandler({
