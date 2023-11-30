@@ -1,14 +1,8 @@
 import fs from 'node:fs'
-import { addImports, addServerImports, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
-import { createFilter } from '@rollup/pluginutils'
+import { addImports, addPlugin, addServerHandler, addServerImports, addTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import fg from 'fast-glob'
 import _ from 'lodash'
-import dedent from 'dedent'
-import { addTransformerPlugin } from './runtime/add-transformer-plugin'
 import { DefaultModuleOptions, type Options } from './runtime/options'
-import { writeRouterTemplateFiles } from './runtime/write-router-template'
-import { writeProcedureTemplateFiles } from './runtime/write-procedure-template'
-import { writeServerHandlerTemplateFiles } from './runtime/write-server-handler-template'
 import { parseProcedurePath } from './runtime/parse-procedure-path'
 
 export default defineNuxtModule({
@@ -24,6 +18,7 @@ export default defineNuxtModule({
         // Options
         const options: Options = { ...moduleOptions, nuxt, cwd: nuxt.options.srcDir }
         const resolver = createResolver(nuxt.options.srcDir)
+        const buildResolver = createResolver(nuxt.options.buildDir)
 
         // Scan TRPC files
         const files: string[] = []
@@ -112,11 +107,6 @@ export default defineNuxtModule({
                 return handlerContent
             },
         })
-        nuxt.hook('nitro:config', (nitroConfig) => {
-            nitroConfig.virtual = nitroConfig.virtual || {}
-            nitroConfig.virtual['#trpc-auto/app'] = appContent
-            nitroConfig.virtual['#trpc-auto/server-handler'] = handlerContent
-        })
         nuxt.hook('prepare:types', (options) => {
             options.tsConfig.include?.unshift('./trpc-auto')
         })
@@ -124,12 +114,21 @@ export default defineNuxtModule({
         // Write autoimports
         addImports([{
             name: 'defineTRPCProcedure',
-            from: '#build/trpc-auto/app',
+            from: buildResolver.resolve('trpc-auto/app'),
         }])
         addServerImports([{
             name: 'defineTRPCProcedure',
-            from: '#trpc-auto/app',
+            from: buildResolver.resolve('trpc-auto/app'),
         }])
+
+        // Add server handler
+        addServerHandler({
+            route: '/api/trpc/:trpc',
+            handler: buildResolver.resolve('trpc-auto/server-handler'),
+        })
+
+        // Add plugin
+        addPlugin(buildResolver.resolve('trpc-auto/client-plugin'))
     },
 })
 
