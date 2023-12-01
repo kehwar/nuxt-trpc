@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import dedent from 'dedent'
+import { createResolver } from '@nuxt/kit'
 import type { TRPCProcedure } from '../runtime/parse-procedure-path'
+import type { Options } from '../runtime/options'
 
-export function getServerHandlerTemplate(procedures: TRPCProcedure[]) {
+export function getServerHandlerTemplate(procedures: TRPCProcedure[], options: Options) {
     // Imports
     const imports = procedures
         .map(({ importPath, importName }) => {
@@ -30,10 +32,15 @@ export function getServerHandlerTemplate(procedures: TRPCProcedure[]) {
         ].join('\n')
     })()
 
+    // Context
+    const createContextPath = options.inject.context != null ? createResolver(options.cwd).resolve(options.inject.context) : './context'
+
     // Template
     return dedent`
         import { createNuxtApiHandler } from 'trpc-nuxt'
         import { TRPCApp } from './api'
+
+        import createContext from '${createContextPath}'
 
         ${imports}
 
@@ -45,6 +52,7 @@ export function getServerHandlerTemplate(procedures: TRPCProcedure[]) {
 
         export const TRPCServerHandler = createNuxtApiHandler({
             router: routes,
+            createContext
         })
 
         export default TRPCServerHandler

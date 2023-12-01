@@ -2,7 +2,12 @@ import type { Nuxt } from '@nuxt/schema'
 
 export const DefaultModuleOptions = {
     pattern: '**/*.trpc.{ts,js,mjs}',
+    inject: {
+        context: undefined as unknown as string | undefined,
+    },
     remoteFunctions: {
+        enabled: true as const, // TODO: allow disabling remote functions
+        matchType: 'prefix' as const, // TODO: allow regex matching
         patterns: {
             query: [
                 'access',

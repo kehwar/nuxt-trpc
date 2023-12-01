@@ -7,6 +7,7 @@ import { addTransformerPlugin } from './runtime/add-transformer-plugin'
 import { getApiTemplate } from './templates/get-api-template'
 import { getClientPluginTemplate } from './templates/get-client-plugin-template'
 import { getServerHandlerTemplate } from './templates/get-server-handler-template'
+import { getContextTemplate } from './templates/get-context-template'
 
 export default defineNuxtModule({
     meta: {
@@ -44,7 +45,7 @@ export default defineNuxtModule({
             filename: 'trpc-auto/api.ts',
             write: true,
             getContents() {
-                return getApiTemplate()
+                return getApiTemplate(options)
             },
         })
         addTemplate({
@@ -58,7 +59,14 @@ export default defineNuxtModule({
             filename: 'trpc-auto/server-handler.ts',
             write: true,
             getContents() {
-                return getServerHandlerTemplate(procedures)
+                return getServerHandlerTemplate(procedures, options)
+            },
+        })
+        addTemplate({
+            filename: 'trpc-auto/context.ts',
+            write: true,
+            getContents() {
+                return getContextTemplate()
             },
         })
 
@@ -75,6 +83,9 @@ export default defineNuxtModule({
                 name: 'useTRPCRequestHeaders',
                 from: resolver.resolve('trpc-auto/client-plugin'),
             }, {
+                name: 'defineTRPCContext',
+                from: resolver.resolve('trpc-auto/context'),
+            }, {
                 name: 'defineTRPCProcedure',
                 from: resolver.resolve('trpc-auto/api'),
             }, {
@@ -84,6 +95,9 @@ export default defineNuxtModule({
         )
         addServerImports(
             [{
+                name: 'defineTRPCContext',
+                from: resolver.resolve('trpc-auto/context'),
+            }, {
                 name: 'defineTRPCProcedure',
                 from: resolver.resolve('trpc-auto/api'),
             }, {

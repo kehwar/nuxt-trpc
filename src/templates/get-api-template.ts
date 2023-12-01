@@ -1,10 +1,14 @@
 import dedent from 'dedent'
+import { createResolver } from '@nuxt/kit'
+import type { Options } from '../runtime/options'
 
-export function getApiTemplate() {
+export function getApiTemplate(options: Options) {
+    const createContextPath = options.inject.context != null ? createResolver(options.cwd).resolve(options.inject.context) : './context'
     return dedent`
         import { initTRPC, TRPCError } from '@trpc/server'
         import { uneval } from 'devalue'
         import superjson from 'superjson'
+        import createContext from '${createContextPath}'
 
         // Data Transformer
         const dataTransformer = {
@@ -15,7 +19,7 @@ export function getApiTemplate() {
             },
         }
 
-        const TRPCApp = initTRPC.create({ transformer: dataTransformer })
+        const TRPCApp = initTRPC.context<Context>().create({ transformer: dataTransformer })
         const procedure = TRPCApp.procedure
 
         export function defineTRPCProcedure<T>(callback: (builder: typeof procedure) => T) {
@@ -25,14 +29,14 @@ export function getApiTemplate() {
         export function defineTRPCQuery<TFunc extends ServerFunction>(func: TFunc, options?: TRPCProcedureOptions<TFunc>) {
             return defineTRPCProcedure(p => p
                 .input(options?.validateInput ?? skipValidateInput<TFunc>)
-                .query(async ({ input }) => executeTRPCCall(func, { input: input as any }, options)),
+                .query(async ({ input, ctx }) => executeTRPCCall(func, { input: input as any, ctx }, options)),
             )
         }
 
         export function defineTRPCMutation<TFunc extends ServerFunction>(func: TFunc, options?: TRPCProcedureOptions<TFunc>) {
             return defineTRPCProcedure(p => p
                 .input(options?.validateInput ?? skipValidateInput<TFunc>)
-                .mutation(async ({ input }) => executeTRPCCall(func, { input: input as any }, options)),
+                .mutation(async ({ input, ctx }) => executeTRPCCall(func, { input: input as any, ctx }, options)),
             )
         }
 
@@ -78,9 +82,11 @@ export function getApiTemplate() {
         type Output<TFunc extends ServerFunction> = Awaited<ReturnType<TFunc>>
         type Maybe<T> = T | null | undefined
         type MaybePromise<T> = T | Promise<T>
+        type Context = Awaited<ReturnType<typeof createContext>>
 
         interface TRPCCallState<TFunc extends ServerFunction> {
             input: Parameters<TFunc>
+            ctx: Context
             output?: Output<TFunc>
         }
 
