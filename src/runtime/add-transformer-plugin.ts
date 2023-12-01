@@ -1,6 +1,5 @@
 import { addVitePlugin } from '@nuxt/kit'
 import { createFilter } from '@rollup/pluginutils'
-import { init, parse } from 'es-module-lexer'
 import _ from 'lodash'
 import type { Plugin } from 'vite'
 import type { Options } from './options'
@@ -25,10 +24,5 @@ export function addTransformerPlugin(options: Options) {
     addVitePlugin(plugin)
 }
 function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure) {
-    return [
-        'export default',
-        `export const ${procedureName} =`,
-    ]
-        .map(exportHeader => `${exportHeader} (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(...args)`)
-        .join('\n')
+    return `export const ${procedureName} = (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(...args)`
 }

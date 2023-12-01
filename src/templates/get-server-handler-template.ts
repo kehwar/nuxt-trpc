@@ -14,7 +14,7 @@ export function getServerHandlerTemplate(procedures: TRPCProcedure[]) {
     const routes = (() => {
         const routeMap: Record<string, any> = {}
         for (const obj of procedures)
-            _.set(routeMap, `${obj.routerPathName}.${obj.procedureName}`, `${obj.importName}.TRPCProcedure`)
+            _.set(routeMap, `${obj.routerPathName}.${obj.procedureName}`, `${obj.importName}.default`)
         function stringify(obj: Record<string, any>, depth: number) {
             let str = ''
             for (const key in obj) {
