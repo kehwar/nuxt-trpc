@@ -70,10 +70,15 @@ export default defineNuxtModule({
         const resolver = createResolver(nuxt.options.buildDir)
 
         // Write autoimports
-        addImports([{
-            name: 'defineTRPCProcedure',
-            from: resolver.resolve('trpc-auto/api'),
-        }])
+        addImports(
+            [{
+                name: 'defineTRPCProcedure',
+                from: resolver.resolve('trpc-auto/api'),
+            }, {
+                name: 'useTRPCRequestHeaders',
+                from: resolver.resolve('trpc-auto/client-plugin'),
+            }],
+        )
         addServerImports([{
             name: 'defineTRPCProcedure',
             from: resolver.resolve('trpc-auto/api'),

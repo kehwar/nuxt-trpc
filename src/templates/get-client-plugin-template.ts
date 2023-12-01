@@ -3,9 +3,11 @@ import dedent from 'dedent'
 export function getClientPluginTemplate() {
     return dedent`
         import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
+        import { unref } from 'vue'
         import superjson from 'superjson'
         import type { TRPCRoutes } from './server-handler'
-        import { defineNuxtPlugin, useRequestHeaders } from '#imports'
+        import { defineNuxtPlugin, useRequestHeaders, useState } from '#imports'
+        import type { Ref } from 'vue'
 
         // Data Transformer
         const dataTransformer = {
@@ -18,6 +20,7 @@ export function getClientPluginTemplate() {
 
         const TRPCClientPlugin = defineNuxtPlugin(() => {
             const headers = useRequestHeaders()
+            const trpcHeaders = useTRPCRequestHeaders()
             const client = createTRPCNuxtClient<TRPCRoutes>({
                 transformer: dataTransformer,
                 links: [
@@ -25,6 +28,7 @@ export function getClientPluginTemplate() {
                         url: '/api/trpc',
                         async headers() {
                             return {
+                                ...unref(trpcHeaders),
                                 ...headers,
                             }
                         },
@@ -37,6 +41,12 @@ export function getClientPluginTemplate() {
                 },
             }
         })
+
+        type MaybeRef<T> = T | Ref<T>
+
+        export function useTRPCRequestHeaders(initialValue: MaybeRef<Record<string, any>> = {}): Ref<Record<string, any>> {
+            return useState('trpc-auto-header', () => initialValue)
+        }
 
         export default TRPCClientPlugin
     `

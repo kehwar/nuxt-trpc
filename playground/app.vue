@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { sayTest } from './features/dev/src/say-test.trpc'
 import { sayHello } from './features/landing/src/say-hello.trpc'
+import _ from 'lodash'
+
+onMounted(() => {
+
+})
 
 const arr1 = ref<string[]>([])
 const arr2 = ref<string[]>([])

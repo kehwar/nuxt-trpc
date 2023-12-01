@@ -4,4 +4,5 @@ export default defineNuxtConfig({
         transpile: ['trpc-nuxt'],
     },
     devtools: { enabled: true },
+    experimental: { asyncContext: true },
 })
