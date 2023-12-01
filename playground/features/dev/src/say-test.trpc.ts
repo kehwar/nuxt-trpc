@@ -6,4 +6,4 @@ export async function sayTest() {
     return result
 }
 
-export default defineTRPCProcedure(({ query }) => query(async () => `${await sayTest()}`))
+export default defineTRPCQuery(sayTest)
