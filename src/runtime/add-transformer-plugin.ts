@@ -24,5 +24,5 @@ export function addTransformerPlugin(options: Options) {
     addVitePlugin(plugin)
 }
 function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure) {
-    return `export const ${procedureName} = (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(...args)`
+    return `export const ${procedureName} = (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(args)`
 }
