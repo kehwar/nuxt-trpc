@@ -1,4 +1,4 @@
-import { addImports, addPlugin, addServerHandler, addServerImports, addTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addImports, addPluginTemplate, addServerHandler, addServerImports, addTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import fg from 'fast-glob'
 import _ from 'lodash'
 import { DefaultModuleOptions, type Options } from './runtime/options'
@@ -48,7 +48,7 @@ export default defineNuxtModule({
                 return getApiTemplate(options)
             },
         })
-        addTemplate({
+        addPluginTemplate({
             filename: 'trpc-auto/client-plugin.ts',
             write: true,
             getContents() {
@@ -111,9 +111,6 @@ export default defineNuxtModule({
             route: '/api/trpc/:trpc',
             handler: resolver.resolve('trpc-auto/server-handler'),
         })
-
-        // Add plugin
-        addPlugin(resolver.resolve('trpc-auto/client-plugin'))
 
         // Add vite plugin
         addTransformerPlugin(options)
