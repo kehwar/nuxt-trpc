@@ -1,10 +1,10 @@
 {
-    "name": "@kehwar/trpc-nuxt-auto",
+    "name": "@kehwar/nuxt-trpc",
     "type": "module",
     "version": "0.0.3",
-    "description": "Automatic TRPC routes and remote functions",
+    "description": "TRPC wrapper and remote functions",
     "license": "MIT",
-    "repository": "@kehwar/trpc-nuxt-auto",
+    "repository": "kehwar/nuxt-trpc",
     "exports": {
         ".": {
             "types": "./dist/types.d.ts",
