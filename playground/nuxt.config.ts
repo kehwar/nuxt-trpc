@@ -5,9 +5,11 @@ export default defineNuxtConfig({
     },
     devtools: { enabled: true },
     experimental: { asyncContext: true },
-    trpcAuto: {
+    trpc: {
         inject: {
             context: 'server/trpc/context',
         },
+        url: '/api/trpc2',
+        alias: 'trpc2',
     },
 })

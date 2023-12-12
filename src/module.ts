@@ -11,8 +11,8 @@ import { getContextTemplate } from './templates/get-context-template'
 
 export default defineNuxtModule({
     meta: {
-        name: '@kehwar/trpc-nuxt-auto',
-        configKey: 'trpcAuto',
+        name: '@kehwar/nuxt-trpc',
+        configKey: 'trpc',
     },
 
     defaults: DefaultModuleOptions,
@@ -42,28 +42,28 @@ export default defineNuxtModule({
 
         // Write template files
         addTemplate({
-            filename: 'trpc-auto/api.ts',
+            filename: 'trpc/api.ts',
             write: true,
             getContents() {
                 return getApiTemplate(options)
             },
         })
         addPluginTemplate({
-            filename: 'trpc-auto/client-plugin.ts',
+            filename: 'trpc/client-plugin.ts',
             write: true,
             getContents() {
-                return getClientPluginTemplate()
+                return getClientPluginTemplate(options)
             },
         })
         addTemplate({
-            filename: 'trpc-auto/server-handler.ts',
+            filename: 'trpc/server-handler.ts',
             write: true,
             getContents() {
                 return getServerHandlerTemplate(procedures, options)
             },
         })
         addTemplate({
-            filename: 'trpc-auto/context.ts',
+            filename: 'trpc/context.ts',
             write: true,
             getContents() {
                 return getContextTemplate()
@@ -72,7 +72,7 @@ export default defineNuxtModule({
 
         // Add to types
         nuxt.hook('prepare:types', (options) => {
-            options.tsConfig.include?.unshift('./trpc-auto')
+            options.tsConfig.include?.unshift('./trpc')
         })
 
         const resolver = createResolver(nuxt.options.buildDir)
@@ -81,35 +81,35 @@ export default defineNuxtModule({
         addImports(
             [{
                 name: 'useTRPCRequestHeaders',
-                from: resolver.resolve('trpc-auto/client-plugin'),
+                from: resolver.resolve('trpc/client-plugin'),
             }, {
                 name: 'defineTRPCContext',
-                from: resolver.resolve('trpc-auto/context'),
+                from: resolver.resolve('trpc/context'),
             }, {
                 name: 'defineTRPCProcedure',
-                from: resolver.resolve('trpc-auto/api'),
+                from: resolver.resolve('trpc/api'),
             }, {
                 name: 'defineTRPCQuery',
-                from: resolver.resolve('trpc-auto/api'),
+                from: resolver.resolve('trpc/api'),
             }],
         )
         addServerImports(
             [{
                 name: 'defineTRPCContext',
-                from: resolver.resolve('trpc-auto/context'),
+                from: resolver.resolve('trpc/context'),
             }, {
                 name: 'defineTRPCProcedure',
-                from: resolver.resolve('trpc-auto/api'),
+                from: resolver.resolve('trpc/api'),
             }, {
                 name: 'defineTRPCQuery',
-                from: resolver.resolve('trpc-auto/api'),
+                from: resolver.resolve('trpc/api'),
             }],
         )
 
         // Add server handler
         addServerHandler({
-            route: '/api/trpc/:trpc',
-            handler: resolver.resolve('trpc-auto/server-handler'),
+            route: `${options.server.baseUrl}/:trpc`,
+            handler: resolver.resolve('trpc/server-handler'),
         })
 
         // Add vite plugin

@@ -9,13 +9,13 @@ import { parseProcedurePath } from './parse-procedure-path'
 export function addTransformerPlugin(options: Options) {
     const filter = createFilter(options.pattern)
     const plugin: Plugin = {
-        name: 'vite-plugin-trpc-auto',
+        name: 'vite-plugin-trpc',
         enforce: 'post',
         transform(_code, id, _opts) {
             if (!filter(id))
                 return
             const procedure = parseProcedurePath(id, options)
-            const result = transformExportsToTRPCCalls(procedure)
+            const result = transformExportsToTRPCCalls(procedure, options)
             return {
                 code: result,
             }
@@ -23,6 +23,6 @@ export function addTransformerPlugin(options: Options) {
     }
     addVitePlugin(plugin)
 }
-function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure) {
-    return `export const ${procedureName} = (...args) => useNuxtApp().$trpc.${routerPathName}.${procedureName}.${action}(args)`
+function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure, options: Options) {
+    return `export const ${procedureName} = (...args) => useNuxtApp().$${options.client.alias}.${routerPathName}.${procedureName}.${action}(args)`
 }

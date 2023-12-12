@@ -5,6 +5,12 @@ export const DefaultModuleOptions = {
     inject: {
         context: undefined as unknown as string | undefined,
     },
+    client: {
+        alias: 'trpc',
+    },
+    server: {
+        baseUrl: '/api/trpc',
+    },
     remoteFunctions: {
         enabled: true as const, // TODO: allow disabling remote functions
         matchType: 'prefix' as const, // TODO: allow regex matching

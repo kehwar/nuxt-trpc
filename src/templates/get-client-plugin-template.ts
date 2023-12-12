@@ -1,6 +1,7 @@
 import dedent from 'dedent'
+import type { Options } from '../runtime/options'
 
-export function getClientPluginTemplate() {
+export function getClientPluginTemplate(options: Options) {
     return dedent`
         import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
         import { unref } from 'vue'
@@ -25,7 +26,7 @@ export function getClientPluginTemplate() {
                 transformer: dataTransformer,
                 links: [
                     httpBatchLink({
-                        url: '/api/trpc',
+                        url: '${options.server.baseUrl}',
                         async headers() {
                             return {
                                 ...unref(trpcHeaders),
@@ -37,7 +38,7 @@ export function getClientPluginTemplate() {
             })
             return {
                 provide: {
-                    trpc: client,
+                    ${options.client.alias}: client,
                 },
             }
         })
@@ -45,7 +46,7 @@ export function getClientPluginTemplate() {
         type MaybeRef<T> = T | Ref<T>
 
         export function useTRPCRequestHeaders(initialValue: MaybeRef<Record<string, any>> = {}): Ref<Record<string, any>> {
-            return useState('trpc-auto-header', () => initialValue)
+            return useState('trpc-header', () => initialValue)
         }
 
         export default TRPCClientPlugin
