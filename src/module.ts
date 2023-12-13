@@ -91,6 +91,9 @@ export default defineNuxtModule({
             }, {
                 name: 'defineTRPCQuery',
                 from: resolver.resolve('trpc/api'),
+            }, {
+                name: 'defineTRPCMutation',
+                from: resolver.resolve('trpc/api'),
             }],
         )
         addServerImports(
@@ -102,6 +105,9 @@ export default defineNuxtModule({
                 from: resolver.resolve('trpc/api'),
             }, {
                 name: 'defineTRPCQuery',
+                from: resolver.resolve('trpc/api'),
+            }, {
+                name: 'defineTRPCMutation',
                 from: resolver.resolve('trpc/api'),
             }],
         )
