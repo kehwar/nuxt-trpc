@@ -75,7 +75,7 @@ export function getApiTemplate(options: Options) {
         }
 
         function skipValidateInput<TFunc extends ServerFunction>(v: unknown) {
-            return v as Parameters<TFunc>
+            return v as Parameters<TFunc> extends [] ? undefined : Parameters<TFunc>
         }
 
         type ServerFunction = (...args: any[]) => Promise<any>
