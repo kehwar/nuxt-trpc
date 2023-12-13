@@ -50,5 +50,11 @@ export function getClientPluginTemplate(options: Options) {
         }
 
         export default TRPCClientPlugin
+
+        declare module '#app' {
+            interface NuxtApp {
+                $${options.client.alias}: ReturnType<typeof createTRPCNuxtClient<TRPCRoutes>>
+            }
+        }
     `
 }
