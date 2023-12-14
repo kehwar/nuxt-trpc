@@ -10,13 +10,15 @@ export function parseProcedurePath(file: string, { cwd, remoteFunctions }: Optio
     const importPath = path.join(cwd, path.dirname(relativePath), path.basename(relativePath, path.extname(relativePath)))
     const importName = [_.camelCase(routerPathName), procedureName].join('_')
     const procedurePrefix = _.kebabCase(procedureName).split('-')[0]
-    const action = patterns.query.includes(procedurePrefix)
+    const action = (patterns.query.includes(procedurePrefix))
         ? 'query'
-        : patterns.mutation.includes(procedurePrefix)
-            ? 'mutation'
-            : patterns.subscription.includes(procedurePrefix)
-                ? 'subscription'
-                : defaultAction
+        : (patterns.mutation.includes(procedurePrefix))
+                ? 'mutate'
+                : defaultAction === 'query'
+                    ? 'query'
+                    : defaultAction === 'mutation'
+                        ? 'mutate'
+                        : defaultAction
     if (action === 'error')
         throw createError(`Could not guess action for ${file}`)
     return {

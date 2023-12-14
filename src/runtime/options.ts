@@ -43,9 +43,8 @@ export const DefaultModuleOptions = {
                 'upload',
                 'write',
             ],
-            subscription: ['subscribe'],
         },
-        default: 'query' as 'query' | 'mutation' | 'subscription' | 'error',
+        default: 'query' as 'query' | 'mutation' | 'error',
     },
 }
 export type ModuleOptions = typeof DefaultModuleOptions
