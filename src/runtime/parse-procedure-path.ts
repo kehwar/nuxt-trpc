@@ -25,14 +25,14 @@ export function parseProcedurePath(file: string, options: Options) {
 export type TRPCProcedure = ReturnType<typeof parseProcedurePath>
 
 export function getAction(baseName: string, { remoteFunctions }: Options) {
-    const { patterns, default: defaultAction } = remoteFunctions
+    const { patterns, default: defaultType } = remoteFunctions
     if (patterns.query.some(pattern => minimatch(baseName, pattern)))
         return 'query'
     if (patterns.mutation.some(pattern => minimatch(baseName, pattern)))
-        return 'mutation'
+        return 'mutate'
     if (RemoteFunctionPatterns.query.some(pattern => minimatch(baseName, pattern)))
         return 'query'
     if (RemoteFunctionPatterns.mutation.some(pattern => minimatch(baseName, pattern)))
-        return 'mutation'
-    return defaultAction
+        return 'mutate'
+    return defaultType === 'mutation' ? 'mutate' : defaultType
 }
