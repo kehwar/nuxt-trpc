@@ -13,14 +13,13 @@ export function parseProcedurePath(file: string, options: Options) {
     const importName = [_.camelCase(routerPathName), procedureName].join('_')
     const baseName = path.basename(relativePath)
     const action = getAction(baseName, options)
-    if (action === 'error')
-        throw new Error(`Could not guess action for ${file}`)
     return {
         routerPathName,
         procedureName,
         importPath,
         importName,
         action,
+        baseName,
     }
 }
 export type TRPCProcedure = ReturnType<typeof parseProcedurePath>

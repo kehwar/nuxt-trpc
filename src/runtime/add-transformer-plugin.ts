@@ -23,6 +23,8 @@ export function addTransformerPlugin(options: Options) {
     }
     addVitePlugin(plugin)
 }
-function transformExportsToTRPCCalls({ procedureName, routerPathName, action }: TRPCProcedure, options: Options) {
+function transformExportsToTRPCCalls({ procedureName, routerPathName, baseName, action }: TRPCProcedure, options: Options) {
+    if (action === 'error')
+        throw new Error(`Could not determine action for ${baseName}`)
     return `export const ${procedureName} = (...args) => useNuxtApp().$${options.client.alias}.${routerPathName}.${procedureName}.${action}(args)`
 }

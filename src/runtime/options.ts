@@ -27,6 +27,7 @@ export const RemoteFunctionPatterns = {
         'delete-*',
         'disable-*',
         'enable-*',
+        'execute-*',
         'expire-*',
         'flag-*',
         'hide-*',
