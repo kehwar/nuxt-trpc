@@ -19,7 +19,7 @@ export function getClientPluginTemplate(options: Options) {
             },
         }
 
-        const TRPCClientPlugin = defineNuxtPlugin(() => {
+        const TRPCClientPlugin = defineNuxtPlugin((nuxt) => {
             const headers = useRequestHeaders()
             const trpcHeaders = useTRPCRequestHeaders()
             const client = createTRPCNuxtClient<TRPCRoutes>({
@@ -28,6 +28,7 @@ export function getClientPluginTemplate(options: Options) {
                     httpBatchLink({
                         url: '${options.server.baseUrl}',
                         async headers() {
+                            await nuxt.hooks.callHook('trpc:headers', trpcHeaders)
                             return {
                                 ...unref(trpcHeaders),
                                 ...headers,
@@ -51,10 +52,15 @@ export function getClientPluginTemplate(options: Options) {
 
         export default TRPCClientPlugin
 
+        interface PluginHooks {
+            'trpc:headers': (headers: ReturnType<typeof useTRPCRequestHeaders>) => void
+        }
+
         declare module '#app' {
             interface NuxtApp {
                 $${options.client.alias}: ReturnType<typeof createTRPCNuxtClient<TRPCRoutes>>
             }
+            interface RuntimeNuxtHooks extends PluginHooks {}
         }
     `
 }
